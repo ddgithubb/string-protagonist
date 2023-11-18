@@ -1,35 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import init, { add } from 'wasm-lib';
-
+import { BrowserRouter, Routes } from 'react-router-dom';
+import { StartPage } from './views/StartPage';
 function App() {
-  const [ans, setAns] = useState(0);
 
-  useEffect(() => {
-    init().then(() => {
-      setAns(add(1, 1));
-    });
-  }, []);
+    useEffect(() => {
+    }, []);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload. {ans}
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<StartPage />} />
+                <Route path="/game" element={<GamePage />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
