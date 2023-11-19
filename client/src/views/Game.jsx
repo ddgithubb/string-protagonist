@@ -171,7 +171,7 @@ export function Game() {
           Pause
         </Button>
         <div className="game-score">
-          <b>Score:</b> {score.toFixed(2)}
+          <b>Score:</b> {Math.round(score * 100) * 10}
         </div>
         {timer !== 0 ? (
           <div className="game-timer-container">{timer}</div>
