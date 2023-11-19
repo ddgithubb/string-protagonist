@@ -139,93 +139,75 @@ export function Game() {
         <div className="game-header-artist">{song?.artist}</div>
       </div>
       <div className="song-info-container">
-        <div>
-          <b>Track Name:</b> {song?.trackName}
-        </div>
-        <div>
-          <b>Instrument:</b> {song?.instrument}
-        </div>
-        <div>
-          <b>Capo:</b> {song?.capo}
-        </div>
+        <div><b>Track Name:</b> {song?.trackName}</div>
+        <div><b>Instrument:</b> {song?.instrument}</div>
+        <div><b>Capo:</b> {song?.capo}</div>
         {/* <div><b>Frets:</b> {song?.frets}</div> */}
       </div>
       <div className="game-controls-container">
-        <Button
-          onClick={pressStartGame}
-          disabled={
-            gameState === GAME_STATES.STARTED ||
-            gameState === GAME_STATES.LOADING ||
-            timer !== 0
-          }
-        >
-          Start
-        </Button>
-        <Button
-          onClick={pauseGame}
-          disabled={
-            gameState !== GAME_STATES.STARTED ||
-            gameState === GAME_STATES.LOADING
-          }
-        >
-          Pause
-        </Button>
-        <div className="game-score">
-          <b>Score:</b> {score.toFixed(2)}
-        </div>
-        {timer !== 0 ? (
-          <div className="game-timer-container">{timer}</div>
-        ) : null}
+        <Button onClick={pressStartGame} disabled={gameState === GAME_STATES.STARTED || gameState === GAME_STATES.LOADING || timer !== 0}>Start</Button>
+        <Button onClick={pauseGame} disabled={gameState !== GAME_STATES.STARTED || gameState === GAME_STATES.LOADING}>Pause</Button>
+        <div className="game-score"><b>Score:</b> {score}</div>
+        {
+          timer !== 0 ? (
+            <div className="game-timer-container">
+              {timer}
+            </div>
+          ) : null
+        }
       </div>
       <div className="tabs-container">
-        {song?.tuning?.map((tuning, index) => (
-          <div className="tab-line-container" key={index}>
-            <div className="tab-line-string-name">
-              {noteNumberToName(tuning)}
+        {
+          song?.tuning?.map((tuning, index) => (
+            <div className="tab-line-container" key={index}>
+              <div className="tab-line-string-name">{noteNumberToName(tuning)}</div>
+              <div className="tab-line-string-line"></div>
+              {
+                gameState === GAME_STATES.NOT_STARTED ? (
+                  initialFrame[index]?.map((note) => (
+                    <Note
+                      initial={note.initial}
+                      fret={note.fret}
+                      duration={note.timeToHit}
+                      key={note.id}
+                      width={note.holdWidthPercentage}
+                      pause
+                    />
+                  ))
+                ) : null
+              }
+              <AnimatePresence>
+                {
+                  frame[index].map((note) => (
+                    <Note
+                      initial={note.initial}
+                      fret={note.fret}
+                      duration={note.timeToHit}
+                      key={note.id}
+                      width={note.holdWidthPercentage}
+                      pause={gameState !== GAME_STATES.STARTED}
+                    />
+                  ))
+                }
+              </AnimatePresence>
             </div>
-            <div className="tab-line-string-line"></div>
-            {gameState === GAME_STATES.NOT_STARTED
-              ? initialFrame[index]?.map((note) => (
-                  <Note
-                    initial={note.initial}
-                    fret={note.fret}
-                    duration={note.timeToHit}
-                    key={note.id}
-                    width={note.holdWidthPercentage}
-                    pause
-                  />
-                ))
-              : null}
-            <AnimatePresence>
-              {frame[index].map((note) => {
-                return (
-                  <Note
-                    initial={note.initial}
-                    fret={note.fret}
-                    pitch={note.noteNumber}
-                    duration={note.timeToHit}
-                    key={note.id}
-                    width={note.holdWidthPercentage}
-                    pause={gameState !== GAME_STATES.STARTED}
-                  />
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        ))}
+          ))
+        }
       </div>
-      {song?.videoURL ? (
-        <ReactPlayer
-          url={song.videoURL}
-          playing={gameState === GAME_STATES.STARTED}
-          onPlay={startGame}
-          onBuffer={bufferingGame}
-          onEnded={endGame}
-          ref={videoPlayerRef}
-          loop={false}
-          style={{ pointerEvents: "none" }}
-        />
-      ) : null}
+      {
+        song?.videoURL ? (
+          <ReactPlayer
+            url={song.videoURL}
+            playing={gameState === GAME_STATES.STARTED}
+            onPlay={startGame}
+            onBuffer={bufferingGame}
+            onEnded={endGame}
+            ref={videoPlayerRef}
+            loop={false}
+            style={{ pointerEvents: "none" }}
+          />
+        ) : null
+      }
     </div>
   );
 }

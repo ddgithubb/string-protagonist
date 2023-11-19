@@ -1,5 +1,5 @@
 .game-container {
-    background-image: url(../../public/images/bg3.jpg);
+    background-image: url(../images/bg3.jpg);
     background-size: 128vw;
     display: flex;
     flex-direction: column;
@@ -68,19 +68,19 @@ body{
 .tabs-container {
     display: flex;
     flex-direction: column;
-    gap: 1vh;
+    gap: 0.45vw;
     margin: 30px 0px;
-    height: 40vh;
+    height: 16.3vw;
+    position: relative;
+    top: calc(-312px + 17.9vw);
+    left: calc(-50px + 19.5vw);
 }
 
 .tab-line-container {
     display: flex;
     flex-direction: row;
     align-items: center;
-    position: relative;
-    top: calc(1.5vh);
-    left: calc(36vh);
-    height: calc(5vh);
+    height: calc(2.3vw);
 }
 
 .tab-line-string-name {
