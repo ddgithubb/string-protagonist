@@ -36,17 +36,18 @@ async function getWebAudioMediaStream() {
   }
 }
 
-export type OnScoreTickCallback = (score: number) => void;
+export type KeysCallback = (probabilities: number[]) => void;
 
-export const numAudioSamplesPerAnalysis = 1 << 11;
+export const numAudioSamplesPerAnalysis = 1 << 12;
 export const sampleRate = 44100;
 
-export type NoteEvent = {
-  note: number[];
+export type NoteExit = {
+  note: number;
   timestamp: number;
-}
+  length: number;
+};
 
-export async function setupAudio(onScoreTick: OnScoreTickCallback) {
+export async function setupAudio(keysCallback: KeysCallback) {
   // Get the browser audio. Awaits user "allowing" it for the current tab.
   const mediaStream = await getWebAudioMediaStream();
 
@@ -76,7 +77,7 @@ export async function setupAudio(onScoreTick: OnScoreTickCallback) {
     );
     node = new PitchNode(context, "PitchProcessor");
 
-    node.init(wasmBytes, modelBytes, onScoreTick, numAudioSamplesPerAnalysis);
+    node.init(wasmBytes, modelBytes, keysCallback, numAudioSamplesPerAnalysis);
 
     audioSource.connect(node);
 
@@ -88,7 +89,13 @@ export async function setupAudio(onScoreTick: OnScoreTickCallback) {
   }
 
   return {
-    teardownAudio: () => {},
-    noteEvent: (notes: NoteEvent) => {}
+    teardownAudio: () => {
+      node.disconnect();
+      audioSource.disconnect();
+      context.close();
+    },
+    noteEvent: (notes: NoteExit) => {
+      console.log("notes exit", notes);
+    },
   };
 }

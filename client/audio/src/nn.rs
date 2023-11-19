@@ -48,7 +48,7 @@ pub fn get_keys(
     magnitudes: Vec<f32>,
 ) -> Vec<f32> {
     // start a timer
-    let start = js_sys::Date::now();
+    //let start = js_sys::Date::now();
 
     let input: Tensor = tract_ndarray::Array2::from_shape_vec((1, magnitudes.len()), magnitudes)
         .unwrap()

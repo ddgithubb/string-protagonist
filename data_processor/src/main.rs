@@ -10,6 +10,25 @@ use realfft::RealToComplex;
 
 use std::fs::*;
 use std::io::*;
+
+pub fn log_bin(vals: Vec<f32>) -> Vec<f32> {
+    let mut out: Vec<f32> = vec![0.0];
+    let mut block_size = 1.0;
+    let mut added = 0;
+    let mut base = 1.0018067009; // 2^(1/48/8)
+    for i in 0..vals.len() {
+        let idx = out.len() - 1;
+        out[idx] += vals[i];
+        added += 1;
+        if added as f32 > block_size {
+            added = 0;
+            block_size *= 1.01454533494;
+            out.push(0.0);
+        }
+    }
+    out
+}
+
 pub fn process_window(
     window: Vec<i16>,
     fft_plan: Arc<dyn realfft::RealToComplex<f32>>,
@@ -26,7 +45,7 @@ pub fn process_window(
 
     let mut fft_result: Vec<_> = vec![Default::default(); &window.len() / 2 + 1];
     fft_plan.process(&mut window, &mut fft_result).unwrap();
-    fft_result.iter().map(|x| x.norm()).collect::<Vec<_>>()
+    log_bin(fft_result.iter().map(|x| x.norm()).collect::<Vec<_>>())
 }
 
 pub fn augment(window: Vec<f32>) -> Vec<f32> {
@@ -36,8 +55,9 @@ pub fn augment(window: Vec<f32>) -> Vec<f32> {
     let ub = rng.gen_range(lb.max((window.len() * 4) / 5)..window.len());
 
     let f = |x: f32| {
-        1.0f32 / (1.0f32 + (1.1f32).powf(lb as f32 - x))
-            - 1.0f32 / (1.0f32 + (1.1f32).powf(ub as f32 - x))
+        1.0f32
+        /*1.0f32 / (1.0f32 + (1.1f32).powf(lb as f32 - x))
+        - 1.0f32 / (1.0f32 + (1.1f32).powf(ub as f32 - x))*/
     };
 
     window
@@ -48,7 +68,7 @@ pub fn augment(window: Vec<f32>) -> Vec<f32> {
 }
 
 fn main() {
-    let window_size = 1 << 11;
+    let window_size = 1 << 15;
     let fft_plan: Arc<dyn RealToComplex<f32>> =
         realfft::RealFftPlanner::<f32>::new().plan_fft_forward(window_size);
     let step = window_size;
