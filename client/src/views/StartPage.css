@@ -6,7 +6,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: 40vh;
+    height: 55vh;
     width: 100vw;
 }
 
@@ -25,11 +25,13 @@
     background-position: center;
     margin-top: 0px;
     background-image: '${process.env.PUBLIC_URL}/images/guitar_bg.jpg';
-    background-size: cover; 
+    background-size: auto; 
     background-position: center; 
     background-repeat: no-repeat; 
     overflow:hidden;
     height:100vh;
+    width:100vw;
+    overflow:hidden;
 }
 
 .search-container {
@@ -47,6 +49,11 @@
 .fade-in {
     opacity: 1;
     /*transition: opacity 0.5s ease-in-out;*/
+}
+
+.song-list{
+    overflow: auto;
+
 }
 
 .song-list-item{
@@ -97,4 +104,21 @@
 
 .search-bar:focus{
     border: solid red 1px !important;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+  
+::-webkit-scrollbar-track {
+background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+background: red;
+border-radius: 15px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+background: #555;
 }

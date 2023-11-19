@@ -1,2 +1,2 @@
 [workspace]
-members=["client", "data_processor"]
+members=["client/audio", "data_processor"]
