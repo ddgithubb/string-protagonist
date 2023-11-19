@@ -1,8 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 .start-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    justify-content: space-between;
+    height: 40vh;
     width: 100vw;
+}
+
+.start-page-title{
+    height: 20vh;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    font-family: 'Roboto', sans-serif;
+    font-size: 64px;
+    color:crimson
+}
+
+.start-page{
+    margin-top: 0px;
+    background-image: '/images/bg.jpg';
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    overflow:hidden;
+    height:100vh;
+}
+
+.search-container {
+    display: flex;
+    gap: 10px; /* Adjust the gap between text field and button */
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.song-list-item{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color:black;
+    border: 3px solid #ccc; 
+    border-radius: 5px;
+    padding: 10px; 
+    padding-right: 20vh;
+    padding-left:20vh;
+}
+.custom-divider {
+    width: 100%;
+    align-items: center;
+    height: 2px; /* Adjust thickness as needed */
+    background-color: black; /* Replace with your desired color */
+    border: none;
+  }
+
+.cancel-track-button{
+    align-self: center;
 }
