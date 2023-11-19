@@ -65,7 +65,7 @@ function SongSearchInput({ inputText, handleInputChange, handleCursorIn }) {
       type="text"
       className = "search-bar"
       padding="0px"
-      placeholder="Type your song here"
+      placeholder="Type song or artist"
       variant = "outlined"
       size="md"
       value={inputText}
