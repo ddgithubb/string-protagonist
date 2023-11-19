@@ -234,6 +234,21 @@ export class GameLoop {
 
         if (passed === false) {
           changed = true;
+          for (const note of beat.notes) {
+            setTimeout(() => {
+              this.setScore(
+                (score) =>
+                  Math.max(
+                    this.keyProbabilityRef.current[note.noteNumber % 12] -
+                      0.33333,
+                    0
+                  ) **
+                    2 *
+                    4 +
+                  score
+              );
+            }, 300);
+          }
         }
 
         return passed;
