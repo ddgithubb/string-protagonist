@@ -1,4 +1,4 @@
-import PitchNode from "./PitchNode";
+import PitchNode from "./PitchNode.ts";
 
 async function getWebAudioMediaStream() {
   if (!window.navigator.mediaDevices) {
@@ -41,6 +41,11 @@ export type OnScoreTickCallback = (score: number) => void;
 export const numAudioSamplesPerAnalysis = 1 << 11;
 export const sampleRate = 44100;
 
+export type NoteEvent = {
+  note: number[];
+  timestamp: number;
+}
+
 export async function setupAudio(onScoreTick: OnScoreTickCallback) {
   // Get the browser audio. Awaits user "allowing" it for the current tab.
   const mediaStream = await getWebAudioMediaStream();
@@ -82,5 +87,8 @@ export async function setupAudio(onScoreTick: OnScoreTickCallback) {
     );
   }
 
-  return { context, node };
+  return {
+    teardownAudio: () => {},
+    noteEvent: (notes: NoteEvent) => {}
+  };
 }

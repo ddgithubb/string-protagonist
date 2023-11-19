@@ -12,11 +12,11 @@ export const GAME_LOOP_TYPE = {
 }
 
 export class GameLoop {
-    constructor(song, videoPlayer, setFrame, addScore, gameLoopType=GAME_LOOP_TYPE.NO_ADJUSTMENTS) {
+    constructor(song, videoPlayer, setFrame, noteEvent, gameLoopType=GAME_LOOP_TYPE.NO_ADJUSTMENTS) {
         this.song = song;
         this.videoPlayer = videoPlayer;
         this.setFrame = setFrame;
-        this.addScore = addScore;
+        this.noteEvent = noteEvent;
         this.gameLoopType = gameLoopType;
         this.started = false;
         this.nextBeat = 0;
@@ -107,6 +107,7 @@ export class GameLoop {
                 let passed = beat.timestamp > currentTimestamp;
 
                 if (passed === false) {
+                    let notes = [];
                     for (const note of beat.notes) {
                         // Delete first note
                         // if (curFrame[note.string].length === 0) {
@@ -120,7 +121,12 @@ export class GameLoop {
                         }
 
                         currentFrame[note.string].shift();
+                        notes.push(note.noteNumber);
                     }
+                    this.noteEvent({
+                        notes,
+                        timestamp: Date.now(),
+                    });
                     changed = true;
                 }
 

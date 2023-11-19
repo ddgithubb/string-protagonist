@@ -1,10 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
 .start-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 40vh;
     width: 100vw;
 }
@@ -16,12 +14,12 @@
     font-style: italic;
     font-family: 'Roboto', sans-serif;
     font-size: 64px;
-    color:crimson
+    color: white;
 }
 
 .start-page{
     margin-top: 0px;
-    background-image: '/images/bg.jpg';
+    background-image: '${process.env.PUBLIC_URL}/images/guitar_bg.jpg';
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 
@@ -31,17 +29,19 @@
 
 .search-container {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     gap: 10px; /* Adjust the gap between text field and button */
 }
 
 .fade-out {
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    /*transition: opacity 0.5s ease-in-out;*/
 }
 
 .fade-in {
     opacity: 1;
-    transition: opacity 0.5s ease-in-out;
+    /*transition: opacity 0.5s ease-in-out;*/
 }
 
 .song-list-item{
@@ -53,13 +53,6 @@
     padding-right: 20vh;
     padding-left:20vh;
 }
-.custom-divider {
-    width: 100%;
-    align-items: center;
-    height: 2px; /* Adjust thickness as needed */
-    background-color: black; /* Replace with your desired color */
-    border: none;
-  }
 
 .cancel-track-button{
     align-self: center;

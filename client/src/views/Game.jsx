@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Game.css';
-import { getSongData } from '../game/song-tabs';
+import { getSongData } from '../game/api.js';
 import { noteNumberToName } from '../helpers/tunings';
 import Button from '@mui/joy/Button';
 import { Note } from './Note';
 import ReactPlayer from 'react-player';
 import { GameLoop } from '../game/game-loop';
 import { AnimatePresence } from 'framer-motion';
+import { setupAudio } from '../setupAudio.ts';
 
 const GAME_STATES = {
     LOADING: "loading",
@@ -33,6 +34,8 @@ export function Game() {
     const videoPlayerRef = useRef(null);
     const gameLoop = useRef(null);
     const navigate = useNavigate();
+    const teardownAudio = useRef(null);
+    const noteEvent = useRef(null);
 
     useEffect(() => {
         getSongData(songId, revisionId, image, trackNumber).then((song) => {
@@ -46,15 +49,12 @@ export function Game() {
     useEffect(() => {
         if (videoPlayerRef.current === null || gameLoop.current !== null) return;
 
-        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame, addScore);
+        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame);
         setInitialFrame(gameLoop.current.getInitialFrame());
     }, [song]);
 
-    function addScore(s) {
-        setScore(score + s);
-    }
-
     function endGame() {
+        if (teardownAudio.current) teardownAudio.current();
         navigate("/end", {
             state: {
                 score
@@ -62,10 +62,24 @@ export function Game() {
         });
     }
 
+    function updateScore(score) {
+        console.log(score);
+        setScore(score);
+    }
+
     function pressStartGame() {
         if (gameState === GAME_STATES.STARTED || gameState === GAME_STATES.LOADING) return;
 
-        
+        if (teardownAudio.current === null) {
+            const audio = setupAudio(updateScore);
+            teardownAudio.current = audio.teardownAudio;
+            noteEvent.current = audio.noteEvent;
+
+            audio.noteEvent({
+                notes: [],
+                timestamp: 0
+            });
+        }
 
         let counter = 5;
         setTimer(counter);
@@ -86,7 +100,7 @@ export function Game() {
             gameLoop.current.stop();
         }
 
-        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame, addScore);
+        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame, noteEvent.current);
         gameLoop.current.start();
         setGameState(GAME_STATES.STARTED);
     }
@@ -114,6 +128,7 @@ export function Game() {
             <div className="game-controls-container">
                 <Button onClick={pressStartGame} disabled={gameState === GAME_STATES.STARTED || gameState === GAME_STATES.LOADING || timer !== 0}>Start</Button>
                 <Button onClick={pauseGame} disabled={gameState !== GAME_STATES.STARTED || gameState === GAME_STATES.LOADING}>Pause</Button>
+                <div className="game-score"><b>Score:</b> {score}</div>
                 {
                     timer !== 0 ? (
                         <div className="game-timer-container">

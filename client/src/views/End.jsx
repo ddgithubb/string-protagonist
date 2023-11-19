@@ -9,18 +9,18 @@ export function End() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (state?.score === undefined) {
-            navigate("/");
-        }
+        // if (state?.score === undefined) {
+        //     navigate("/");
+        // }
         drawConfetti();
     }, []);
 
     return (
         <div className="end-container">
+            <canvas id="confetti"></canvas>
             <h1 className="end-title">Finished!</h1>
             <p className="score-text">Score: {state?.score}</p>
             <Button onClick={() => navigate("/")}>Back to Start</Button>
-            <canvas id="confetti"></canvas>
         </div>
     )
 }

@@ -4,246 +4,200 @@ import Button from '@mui/joy/Button';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/joy/Typography';
 import React, { useState } from 'react';
-
-const mockSearchResults = [
-    {
-        songId: "0",
-        title: "Title0",
-        artist: "Artist0",
-        tracks:[
-            {
-                trackNumber: 0,
-                name: 'Name0',
-                instrument: 'Instrument0',
-            },
-            {
-                trackNumber: 1,
-                name: 'Name1',
-                instrument: 'Instrument1',
-            },
-            {
-                trackNumber: 2,
-                name: 'Name2',
-                instrument: 'Instrument2',
-            }
-        ]
-    },
-    {
-        songId: "1",
-        title: "Title1",
-        artist: "Artist1",
-        tracks:[
-            {
-                trackNumber: 0,
-                name: 'Name0',
-                instrument: 'Instrument0',
-            },
-            {
-                trackNumber: 1,
-                name: 'Name1',
-                instrument: 'Instrument1',
-            },
-            {
-                trackNumber: 2,
-                name: 'Name2',
-                instrument: 'Instrument2',
-            }
-        ]
-    },
-    {
-        songId: "2",
-        title: "Title2",
-        artist: "Artist2",
-        tracks:[
-            {
-                trackNumber: 0,
-                name: 'Name0',
-                instrument: 'Instrument0',
-            },
-            {
-                trackNumber: 1,
-                name: 'Name1',
-                instrument: 'Instrument1',
-            },
-            {
-                trackNumber: 2,
-                name: 'Name2',
-                instrument: 'Instrument2',
-            }
-        ]
-    },
-    {
-        songId: "3",
-        title: "Title3",
-        artist: "Artist3",
-        tracks:[
-            {
-                trackNumber: 0,
-                name: 'Name0',
-                instrument: 'Instrument0',
-            },
-            {
-                trackNumber: 1,
-                name: 'Name1',
-                instrument: 'Instrument1',
-            },
-            {
-                trackNumber: 2,
-                name: 'Name2',
-                instrument: 'Instrument2',
-            }
-        ]
-    },
-]
+import { getSongMetadata, searchSong } from '../game/api';
+import { useNavigate } from 'react-router-dom';
 
 export function StartPage() {
-  let inputSongTitle="";
-  let selectedSongTitle="";
-  let selectedSongID=0;
+  let inputSongTitle = "";
+  let selectedSongTitle = "";
+  let selectedSongID = 0;
   const [inputText, setInputText] = useState('');
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [filteredSongs, setFilteredSongs] = useState([]);
   const [trackListShown, setTrackListShown] = useState(false);
 
+  const handleCursorIn = () => {
+    if (inputText == "") {
+      setIsVisible(false);
+    }
+  }
+
   const handleInputChange = (event) => {
-    setInputText(event.target.value);
+    let text = event.target.value;
+    setInputText(text);
+
+    // const filteredSongs = mockSearchResults.filter(result =>
+    //   result.title.concat(" - ".concat(result.artist)).toLowerCase().includes(text.toLowerCase())
+    // );
+
+    // setFilteredSongs(filteredSongs);
+    // setTrackListShown(false);
+
+    // if (text == "") {
+    //   setIsVisible(false);
+    // }
+    // else {
+    //   setIsVisible(true);
+    // }
+    searchSong(text).then((songs) => {
+      setFilteredSongs(songs);
+      setTrackListShown(false);
+
+      if (text == "") {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+    });
   };
 
   const handleButtonClick = () => {
-    inputSongTitle=inputText;
+    inputSongTitle = inputText;
     setInputText("");
-    setIsVisible(false);
-    if (trackListShown){
-        setTrackListShown(false);
+    if (inputSongTitle == "") {
+      setIsVisible(false);
     }
-    const filteredSongs = mockSearchResults.filter(result =>
-        result.title.toLowerCase().includes(inputSongTitle.toLowerCase())
-      );
-  
-    setFilteredSongs(filteredSongs);
-
+    else {
+      setIsVisible(true);
+    }
+    setTrackListShown(false);
   };
-    const bg={
-      backgroundImage:'/images/bg.jpg',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      width: '100%',  // Set the width to fill the container
-      height: '100vh' // Set the height to fill the viewport
-    }
-    return (
-        <div className="start-page" style={bg}>
-            <div className="start-page-title">
-                <p>
-                    STRING PROTAGONIST
-                </p>
-            </div>
-            <div className="start-page-container">
-                <div className="search-container">
-                    <SongSearchInput inputText={inputText} handleInputChange={handleInputChange} isVisible={true} />
-                    <ChangeTextButton handleButtonClick={handleButtonClick} isVisible={true}/>
-                </div>
 
-                <div className="song-list">
-                    <SongList isVisible={!isVisible} filteredSongs={filteredSongs} 
-                        selectedSongID={selectedSongID} selectedSongTitle={selectedSongTitle}
-                            trackListShown={trackListShown} setTrackListShown={setTrackListShown}/>
-                </div>
-            </div>
+  return (
+    <div className="start-page">
+      <div className="start-page-title">
+        <img alt="String Protagonist" src="../../public/images/title.png"></img>
+      </div>
+      <div className="start-page-container">
+        <div className="search-container">
+          <SongSearchInput inputText={inputText} handleInputChange={handleInputChange} handleCursorIn={handleCursorIn} />
+          <ChangeTextButton handleButtonClick={handleButtonClick} />
         </div>
-    );
+
+        <div className="song-list">
+          <SongList isVisible={isVisible} filteredSongs={filteredSongs}
+            selectedSongID={selectedSongID} selectedSongTitle={selectedSongTitle}
+            trackListShown={trackListShown} setTrackListShown={setTrackListShown} />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function SongSearchInput({ inputText, handleInputChange, isVisible, handleSelect}) {
-    return (
-      <Input
-        type="text"
-        placeholder="Type Song Name"
-        value={inputText}
-        onChange={handleInputChange}
-        className={isVisible ? '' : 'fade-out'}
-      >
+function SongSearchInput({ inputText, handleInputChange, handleCursorIn }) {
+  return (
+    <Input
+      type="text"
+      placeholder="Type your song here"
+      variant="outlined"
+      size="lg"
+      value={inputText}
+      onChange={handleInputChange}
+      style={{
+        margin: '0 auto',
+        color: "#FF000090",
+        backgroundColor: "#00000050",
+        fontSize: "25pt",
+        height: "70px",
+        width: "700px",
+        border: "solid white 1px",
+        borderRadius: "15px",
+        fontFamily: "roboto",
+        fontWeight: "light",
+      }}
+      sx={{
+        input: { textAlign: "center" }
+      }}
+    >
     </Input>
-    );
+  );
+}
+
+function ChangeTextButton({ handleButtonClick, isVisible }) {
+  return (
+    <Button onClick={handleButtonClick}
+      style={{
+        color: "#00000090",
+        fontSize: "25px",
+        fontFamily: "arial",
+        width: "200px",
+        height: "65px",
+        margin: "auto",
+        background: "linear-gradient(30deg, rgba(2,0,36,0.8) 0%, rgba(219,41,2,0.8) 0%, rgba(200,200,40,0.8) 100%)"
+      }}>Submit</Button>
+  );
+}
+
+function SongList({ isVisible, filteredSongs, selectedSongID, selectedSongTitle, trackListShown,
+  setTrackListShown }) {
+
+  const [selectedMetadata, setSelectedMetadata] = useState(null);
+  const navigate = useNavigate();
+
+  const handleSongSelect = (songId) => {
+    getSongMetadata(songId).then((metadata) => {
+      setSelectedMetadata(metadata);
+      setTrackListShown(true);
+    });
   }
-  
-  function ChangeTextButton({ handleButtonClick, isVisible}) {
-    return (
-      <Button onClick={handleButtonClick}
-      className={isVisible ? '' : 'fade-out'}
-      >Submit</Button>
-    );
+
+  const handleTrackSelect = (track) => {
+    navigate("/game/" + selectedMetadata.songId + "/" + selectedMetadata.revisionId + "/" + selectedMetadata.image + "/" + track.trackNumber);
   }
 
-  function SongList({isVisible, filteredSongs, selectedSongID, selectedSongTitle, trackListShown,
-    setTrackListShown}){
+  const cancelTrackSelect = () => {
+    setTrackListShown(false);
+  }
+  return (
+    <List className={isVisible ? 'fade-in' : 'fade-out'}>
+      {trackListShown ? (
+        selectedMetadata.tracks.map((track, index) => (
+          <ListItem key={index}>
+            <ListItemText className="song-list-item">
+              {track.name + ', ' + track.instrument}
+            </ListItemText>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handleTrackSelect(track)}
+            >
+              Select
+            </Button>
+          </ListItem>
+        ))
+      ) : (
+        filteredSongs.map((result, index) => (
+          <ListItem key={index}>
+            <ListItemText className="song-list-item"
+              style={{
+                color: "#FFDDAA",
+                height: "30px",
+                background: "linear-gradient(90deg, rgba(2,0,36,0.3) 0%, rgba(100,100,0,0.3) 0%, rgba(200,0,0,0.3) 100%)"
+              }}>
+              {result.title + ' - ' + result.artist}
+            </ListItemText>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handleSongSelect(result.songId)}
+            >
+              Select
+            </Button>
+          </ListItem>
+        ))
+      )}
+      {trackListShown && (
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={cancelTrackSelect}
+          className="cancel-track-button"
+        >
+          Cancel
+        </Button>
+      )}
+    </List>
+  );
 
-    const [trackList, setTrackList]= useState(filteredSongs)
- 
-
-    const handleSongSelect= (tracks) =>{
-        setTrackList(tracks)
-        setTrackListShown(true);
-    }
-
-    const handleTrackSelect=(track) =>{
-        console.log(track.name);
-    }
-
-    const cancelTrackSelect=()=>{
-        setTrackListShown(false);
-    }
-    return (
-      <List className={isVisible ? 'fade-in' : 'fade-out'}>
-        {trackListShown ? (
-          trackList.map((track, index) => (
-            <React.Fragment key={track.name}>
-              <ListItem>
-                <ListItemText className="song-list-item">
-                  {track.name + ',' + track.instrument}
-                </ListItemText>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => handleTrackSelect(track)}
-                >
-                  Select
-                </Button>
-              </ListItem>
-              {index < trackList.length - 1 && <hr className="custom-divider" />}
-            </React.Fragment>
-          ))
-        ) : (
-          filteredSongs.map((result, index) => (
-            <React.Fragment key={result.songId}>
-              <ListItem>
-                <ListItemText className="song-list-item">
-                  {result.title + ',' + result.artist}
-                </ListItemText>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => handleSongSelect(result.tracks)}
-                >
-                  Select
-                </Button>
-              </ListItem>
-              {index < filteredSongs.length - 1 && <hr className="custom-divider" />}
-            </React.Fragment>
-          ))
-        )}
-        {trackListShown && (
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={cancelTrackSelect}
-            className="cancel-track-button"
-          >
-            Cancel
-          </Button>
-        )}
-      </List>
-    );
-    
-    }
+}

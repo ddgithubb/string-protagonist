@@ -7,10 +7,10 @@ export default class PitchNode extends AudioWorkletNode {
   init(
     wasmBytes: ArrayBuffer,
     modelBytes: ArrayBuffer,
-    onPitchDetectedCallback: OnScoreTickCallback,
+    onScoreTickCallback: OnScoreTickCallback,
     numAudioSamplesPerAnalysis: number
   ) {
-    this.onScoreTickCallback = onPitchDetectedCallback;
+    this.onScoreTickCallback = onScoreTickCallback;
     this.numAudioSamplesPerAnalysis = numAudioSamplesPerAnalysis;
 
     // Listen to messages sent from the audio processor.
@@ -20,6 +20,7 @@ export default class PitchNode extends AudioWorkletNode {
       type: "send-wasm-module",
       wasmBytes,
       modelBytes,
+      onScoreTickCallback
     });
   }
 
@@ -30,8 +31,9 @@ export default class PitchNode extends AudioWorkletNode {
         sampleRate: this.context.sampleRate,
         numAudioSamplesPerAnalysis: this.numAudioSamplesPerAnalysis,
       });
-    } else if (event.type === "pitch") {
-      if (this.onScoreTickCallback) this.onScoreTickCallback(event.pitch);
+    } else if (event.type === "score") {
+      console.log(event);
+      if (this.onScoreTickCallback) this.onScoreTickCallback(event.score);
     }
   }
 }

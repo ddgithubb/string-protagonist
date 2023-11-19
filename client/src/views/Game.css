@@ -29,15 +29,21 @@
     justify-content: flex-start;
     align-items: center;
     gap: 20px;
+
 }
 
 .game-timer-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: bold;
     margin-left: 50px;
+}
+
+.game-score {
+    font-size: 28px;
+    margin-left: 20px;
 }
 
 .song-info-container {

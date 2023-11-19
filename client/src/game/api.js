@@ -12,3 +12,23 @@ export async function getSongData(songId, revisionId, image, trackNumber) {
 
     return await songData.json();
 }
+
+export async function searchSong(query, limit=5) {
+    const searchResults = await fetch(SERVER_URL + `/song-search?query=${encodeURIComponent(query)}&limit=${limit}`);
+
+    if (!searchResults.ok) {
+        return undefined;
+    }
+
+    return await searchResults.json();
+}
+
+export async function getSongMetadata(songId) {
+    const songMetadata = await fetch(SERVER_URL + `/song-metadata?songId=${songId}`);
+
+    if (!songMetadata.ok) {
+        return undefined;
+    }
+
+    return await songMetadata.json();
+}
