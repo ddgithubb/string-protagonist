@@ -1,16 +1,16 @@
-import { OnScoreTickCallback } from "./setupAudio";
+import { KeysCallback } from "./setupAudio";
 
 export default class PitchNode extends AudioWorkletNode {
-  onScoreTickCallback: OnScoreTickCallback | undefined;
+  keysCallback: KeysCallback | undefined;
   numAudioSamplesPerAnalysis: number = 0;
 
   init(
     wasmBytes: ArrayBuffer,
     modelBytes: ArrayBuffer,
-    onScoreTickCallback: OnScoreTickCallback,
+    keysCallback: KeysCallback,
     numAudioSamplesPerAnalysis: number
   ) {
-    this.onScoreTickCallback = onScoreTickCallback;
+    this.keysCallback = keysCallback;
     this.numAudioSamplesPerAnalysis = numAudioSamplesPerAnalysis;
 
     // Listen to messages sent from the audio processor.
@@ -30,9 +30,8 @@ export default class PitchNode extends AudioWorkletNode {
         sampleRate: this.context.sampleRate,
         numAudioSamplesPerAnalysis: this.numAudioSamplesPerAnalysis,
       });
-    } else if (event.type === "score") {
-      console.log(event);
-      if (this.onScoreTickCallback) this.onScoreTickCallback(event.score);
+    } else if (event.type === "keys") {
+      if (this.keysCallback) this.keysCallback(event.probabilities);
     }
   }
 }

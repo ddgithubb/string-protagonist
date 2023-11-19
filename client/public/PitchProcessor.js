@@ -20,7 +20,6 @@ class PitchProcessor extends AudioWorkletProcessor {
   }
 
   sendScoreMessage(score) {
-    console.log("sending score message");
     this.port.postMessage({
       type: "score",
       score,
@@ -41,8 +40,7 @@ class PitchProcessor extends AudioWorkletProcessor {
       this.detector = PitchDetector.new(
         sampleRate,
         numAudioSamplesPerAnalysis,
-        this.modelBytes,
-        (score) => this.sendScoreMessage(score)
+        this.modelBytes
       );
 
       this.samples = new Float32Array(numAudioSamplesPerAnalysis).fill(0);
@@ -71,7 +69,10 @@ class PitchProcessor extends AudioWorkletProcessor {
     }
 
     if (this.totalSamples >= this.numAudioSamplesPerAnalysis && this.detector) {
-      this.detector.put_pitch(this.samples);
+      this.port.postMessage({
+        type: "keys",
+        probabilities: this.detector.put_pitch(this.samples),
+      });
     }
     return true;
   }

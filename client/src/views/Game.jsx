@@ -9,6 +9,7 @@ import ReactPlayer from 'react-player';
 import { GameLoop } from '../game/game-loop';
 import { AnimatePresence } from 'framer-motion';
 import { setupAudio } from '../setupAudio.ts';
+import { useSetKeyProbabilities } from '../state.tsx';
 
 const GAME_STATES = {
     LOADING: "loading",
@@ -36,10 +37,11 @@ export function Game() {
     const navigate = useNavigate();
     const teardownAudio = useRef(null);
     const noteEvent = useRef(null);
+    const keyProbabilityRef = useRef(null);
+    const setKeys = useSetKeyProbabilities();
 
     useEffect(() => {
         getSongData(songId, revisionId, image, trackNumber).then((song) => {
-            console.log(song);
             setFrame(song.tuning.map(() => []));
             setSong(song);
             setGameState(GAME_STATES.NOT_STARTED);
@@ -47,9 +49,10 @@ export function Game() {
     }, []);
 
     useEffect(() => {
-        if (videoPlayerRef.current === null || gameLoop.current !== null) return;
+        if (videoPlayerRef.current === null || gameLoop.current !== null || keyProbabilityRef.current === null) return;
+        //TODO: What is this?
 
-        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame);
+        gameLoop.current = new GameLoop(song, videoPlayerRef.current, noteEvent.current, setFrame, setScore, keyProbabilityRef);
         setInitialFrame(gameLoop.current.getInitialFrame());
     }, [song]);
 
@@ -62,21 +65,19 @@ export function Game() {
         });
     }
 
-    function updateScore(score) {
-        console.log(score);
-        setScore(score);
-    }
-
     async function pressStartGame() {
         if (gameState === GAME_STATES.STARTED || gameState === GAME_STATES.LOADING) return;
 
         if (teardownAudio.current === null) {
-            const audio = await setupAudio(updateScore);
+            const audio = await setupAudio((keys) => {
+                setKeys(keys)
+                keyProbabilityRef.current = keys;
+            });
             teardownAudio.current = audio.teardownAudio;
             noteEvent.current = audio.noteEvent;
         }
 
-        let counter = 5;
+        let counter = 3;
         setTimer(counter);
         counter--;
         let startGameInterval = setInterval(() => {
@@ -95,7 +96,7 @@ export function Game() {
             gameLoop.current.stop();
         }
 
-        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame, noteEvent.current);
+        gameLoop.current = new GameLoop(song, videoPlayerRef.current, setFrame, noteEvent.current, setScore, keyProbabilityRef);
         gameLoop.current.start();
         setGameState(GAME_STATES.STARTED);
     }
@@ -154,16 +155,17 @@ export function Game() {
                             }
                             <AnimatePresence>
                                 {
-                                    frame[index].map((note) => (
-                                        <Note 
+                                    frame[index].map((note) => {
+                                        return <Note 
                                             initial={note.initial} 
                                             fret={note.fret} 
+                                            pitch={note.noteNumber}
                                             duration={note.timeToHit} 
                                             key={note.id} 
                                             width={note.holdWidthPercentage}
                                             pause={ gameState !== GAME_STATES.STARTED } 
                                         />
-                                    ))
+                                    })
                                 }
                             </AnimatePresence>
                         </div>
