@@ -150,7 +150,7 @@ function SongList({ isVisible, filteredSongs, selectedSongID, selectedSongTitle,
     setTrackListShown(false);
   }
   return (
-    <List className={isVisible ? 'fade-in' : 'fade-out'}>
+    <List className={isVisible ? 'fade-in' : 'fade-out'} style={{overflowY: 'auto'}}>
       {trackListShown ? (
         selectedMetadata.tracks.map((track, index) => (
           <ListItem key={index}>
