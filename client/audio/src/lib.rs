@@ -43,12 +43,17 @@ pub struct PitchDetector {
         Box<dyn TypedOp>,
         tract_onnx::prelude::Graph<TypedFact, Box<dyn TypedOp>>,
     >,
-    score_cb: js_sys::Function
+    score_cb: js_sys::Function,
 }
 
 #[wasm_bindgen]
 impl PitchDetector {
-    pub fn new(sample_rate: usize, fft_size: usize, model_bytes: Vec<u8>, score_cb: js_sys::Function) -> PitchDetector {
+    pub fn new(
+        sample_rate: usize,
+        fft_size: usize,
+        model_bytes: Vec<u8>,
+        score_cb: js_sys::Function,
+    ) -> PitchDetector {
         #[cfg(feature = "console_error_panic_hook")]
         console_error_panic_hook::set_once();
         log("Hello from wasm");
@@ -67,11 +72,12 @@ impl PitchDetector {
             fft_size: fft_size,
             fft_plan: planner.plan_fft_forward(fft_size),
             model: get_model(model_bytes),
-            score_cb
+            score_cb,
         }
     }
 
     pub fn put_pitch(&self, audio_data: &[f32]) {
+        log("Pitch upd");
         let mut padded_audio_data = audio_data
             .iter()
             .copied()
@@ -92,10 +98,7 @@ impl PitchDetector {
             .collect::<Vec<_>>();
 
         self.score_cb
-            .call1(&JsValue::NULL, &JsValue::from(1));
-    }
-
-    pub fn get_score() -> f32 {
-        return 100.0;
+            .call1(&JsValue::NULL, &JsValue::from(1))
+            .unwrap();
     }
 }
