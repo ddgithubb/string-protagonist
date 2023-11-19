@@ -77,8 +77,9 @@ function SongSearchInput({ inputText, handleInputChange, handleCursorIn }) {
        fontSize: "25pt",
        height: "70px",
        width: "700px",
-       border: "solid white 1px",
+       border: "solid white 2px",
        borderRadius: "15px",
+       borderColor: "white",
        fontFamily: "roboto",
        fontWeight: "light",
       }}
@@ -147,6 +148,11 @@ function SongList({ isVisible, filteredSongs, selectedSongID, selectedSongTitle,
           color="primary"
           onClick={cancelTrackSelect}
           className="cancel-track-button"
+          style={{
+            color: "#FFDDAA",
+            height: "30px",
+            background: "linear-gradient(90deg, rgba(2,0,36,0.3) 0%, rgba(100,100,0,0.3) 0%, rgba(200,0,0,0.3) 100%)"
+          }}
         >
           Cancel
         </Button>
