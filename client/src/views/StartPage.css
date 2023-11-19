@@ -1,14 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
 .start-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: 75vh;
+    height: 40vh;
     width: 100vw;
 }
 
 .start-page-title{
-    height: 20vh;
+    height: 250px;
     text-align: center;
     font-weight: bold;
     font-style: italic;
@@ -18,6 +21,8 @@
 }
 
 .start-page{
+    background-image: url(../../public/images/bg2.jpg);
+    background-position: center;
     margin-top: 0px;
     background-image: '${process.env.PUBLIC_URL}/images/guitar_bg.jpg';
     background-size: cover; 
@@ -37,30 +42,59 @@
 .fade-out {
     opacity: 0;
     /*transition: opacity 0.5s ease-in-out;*/
-    overflow:auto
 }
 
 .fade-in {
     opacity: 1;
     /*transition: opacity 0.5s ease-in-out;*/
-    overflow:auto
 }
 
 .song-list-item{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 35px;
     color:black;
-    border: 3px solid #ccc; 
+    border: 2px solid #ccc; 
     border-radius: 5px;
     padding: 10px; 
     padding-right: 20vh;
     padding-left:20vh;
 }
 
-.song-list{
-    height: 100vh;
-    max-height: 60vh;
-    overflow-y: scroll;
+.song-list-item:hover {
+    background-color: rgba(150,100,0,0.3) !important;
+    cursor: pointer !important;
 }
+
+.custom-divider {
+    width: 100%;
+    align-items: center;
+    height: 2px; /* Adjust thickness as needed */
+    background-color: black; /* Replace with your desired color */
+    border: none;
+  }
+
 .cancel-track-button{
     align-self: center;
+}
+
+#title{
+    position: relative;
+    top: 65px;
+    width: 1000px;
+}
+
+.trackNames, .songTitles{
+    margin: 0px;
+    font-family: roboto;
+    font-size: 25px;
+}
+
+.search-bar {
+    outline: none !important;
+    border-radius: 15px;
+    padding: 0;
+}
+
+.search-bar:focus{
+    border: solid red 1px !important;
 }

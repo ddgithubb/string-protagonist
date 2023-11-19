@@ -27,19 +27,6 @@ export function StartPage() {
     let text = event.target.value;
     setInputText(text);
 
-    // const filteredSongs = mockSearchResults.filter(result =>
-    //   result.title.concat(" - ".concat(result.artist)).toLowerCase().includes(text.toLowerCase())
-    // );
-
-    // setFilteredSongs(filteredSongs);
-    // setTrackListShown(false);
-
-    // if (text == "") {
-    //   setIsVisible(false);
-    // }
-    // else {
-    //   setIsVisible(true);
-    // }
     searchSong(text).then((songs) => {
       setFilteredSongs(songs);
       setTrackListShown(false);
@@ -52,27 +39,14 @@ export function StartPage() {
     });
   };
 
-  const handleButtonClick = () => {
-    inputSongTitle = inputText;
-    setInputText("");
-    if (inputSongTitle == "") {
-      setIsVisible(false);
-    }
-    else {
-      setIsVisible(true);
-    }
-    setTrackListShown(false);
-  };
-
   return (
     <div className="start-page">
       <div className="start-page-title">
-        <img alt="String Protagonist" src="../../public/images/title.png"></img>
+        <img alt="String Protagonist" src="/images/title.png" id="title"></img>
       </div>
       <div className="start-page-container">
         <div className="search-container">
           <SongSearchInput inputText={inputText} handleInputChange={handleInputChange} handleCursorIn={handleCursorIn} />
-          <ChangeTextButton handleButtonClick={handleButtonClick} />
         </div>
 
         <div className="song-list">
@@ -89,43 +63,29 @@ function SongSearchInput({ inputText, handleInputChange, handleCursorIn }) {
   return (
     <Input
       type="text"
+      className = "search-bar"
+      padding="0px"
       placeholder="Type your song here"
-      variant="outlined"
+      variant = "outlined"
       size="lg"
       value={inputText}
       onChange={handleInputChange}
       style={{
-        margin: '0 auto',
-        color: "#FF000090",
-        backgroundColor: "#00000050",
-        fontSize: "25pt",
-        height: "70px",
-        width: "700px",
-        border: "solid white 1px",
-        borderRadius: "15px",
-        fontFamily: "roboto",
-        fontWeight: "light",
+       margin: '0 auto',
+       color: "#FF000090",
+       backgroundColor: "#00000099",
+       fontSize: "25pt",
+       height: "70px",
+       width: "700px",
+       border: "solid white 1px",
+       borderRadius: "15px",
+       fontFamily: "roboto",
+       fontWeight: "light",
       }}
-      sx={{
-        input: { textAlign: "center" }
-      }}
+      sx={{ input: { textAlign: "center"}
+    }}
     >
     </Input>
-  );
-}
-
-function ChangeTextButton({ handleButtonClick, isVisible }) {
-  return (
-    <Button onClick={handleButtonClick}
-      style={{
-        color: "#00000090",
-        fontSize: "25px",
-        fontFamily: "arial",
-        width: "200px",
-        height: "65px",
-        margin: "auto",
-        background: "linear-gradient(30deg, rgba(2,0,36,0.8) 0%, rgba(219,41,2,0.8) 0%, rgba(200,200,40,0.8) 100%)"
-      }}>Submit</Button>
   );
 }
 
@@ -150,40 +110,34 @@ function SongList({ isVisible, filteredSongs, selectedSongID, selectedSongTitle,
     setTrackListShown(false);
   }
   return (
-    <List className={isVisible ? 'fade-in' : 'fade-out'} style={{overflowY: 'auto'}}>
+    <List className={isVisible ? 'fade-in' : 'fade-out'}>
       {trackListShown ? (
         selectedMetadata.tracks.map((track, index) => (
           <ListItem key={index}>
-            <ListItemText className="song-list-item">
-              {track.name + ', ' + track.instrument}
-            </ListItemText>
-            <Button
-              variant="outlined"
-              color="primary"
+            <ListItemText className="song-list-item"
               onClick={() => handleTrackSelect(track)}
-            >
-              Select
-            </Button>
+              style={{
+                color: "#FFDDAA",
+                height: "35px",
+                border: "solid white 2px",
+                background: "linear-gradient(90deg, rgba(2,0,36,0.34) 0%, rgba(150,100,0,0.34) 0%, rgba(200,0,0,0.34) 100%)"
+              }}>
+              <p class="trackNames">{track.name + ', ' + track.instrument}</p>
+            </ListItemText>
           </ListItem>
         ))
       ) : (
         filteredSongs.map((result, index) => (
           <ListItem key={index}>
             <ListItemText className="song-list-item"
+              onClick={() => handleSongSelect(result.songId)}
               style={{
                 color: "#FFDDAA",
                 height: "30px",
                 background: "linear-gradient(90deg, rgba(2,0,36,0.3) 0%, rgba(100,100,0,0.3) 0%, rgba(200,0,0,0.3) 100%)"
               }}>
-              {result.title + ' - ' + result.artist}
+              <p class="songTitles">{result.title + ' - ' + result.artist}</p>
             </ListItemText>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleSongSelect(result.songId)}
-            >
-              Select
-            </Button>
           </ListItem>
         ))
       )}
