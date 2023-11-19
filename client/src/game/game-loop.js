@@ -153,13 +153,17 @@ export class GameLoop {
             setTimeout(() => {
               this.setScore(
                 (score) =>
-                  Math.max(
-                    this.keyProbabilityRef.current[note.noteNumber % 12] -
-                      0.33333,
-                    0
-                  ) **
-                    2 *
-                    4 +
+                  Math.round(
+                    100 *
+                      Math.max(
+                        this.keyProbabilityRef.current[note.noteNumber % 12] -
+                          0.33333,
+                        0
+                      ) **
+                        2 *
+                      4
+                  ) *
+                    10 +
                   score
               );
             }, 300);
@@ -238,13 +242,17 @@ export class GameLoop {
             setTimeout(() => {
               this.setScore(
                 (score) =>
-                  Math.max(
-                    this.keyProbabilityRef.current[note.noteNumber % 12] -
-                      0.33333,
-                    0
-                  ) **
-                    2 *
-                    4 +
+                  Math.round(
+                    Math.max(
+                      this.keyProbabilityRef.current[note.noteNumber % 12] -
+                        0.33333,
+                      0
+                    ) **
+                      2 *
+                      4 *
+                      100
+                  ) *
+                    10 +
                   score
               );
             }, 300);
