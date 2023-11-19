@@ -32,6 +32,9 @@ export class GameLoop {
             nextBeat++;
 
             let timeToHit = beat.timestamp;
+            if (timeToHit === 0) {
+                timeToHit += 0.1;
+            }
             let initial = 100 * (timeToHit / TIME_WINDOW);
             for (const note of beat.notes) {
                 note.initial = initial;
