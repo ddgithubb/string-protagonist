@@ -1,0 +1,1 @@
+export const MAX_LEADERBOARD_SIZE = 10;

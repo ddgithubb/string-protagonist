@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import './End.css';
-import { Button } from "@mui/joy";
+import { Button, Input } from "@mui/joy";
+import { addToLeaderboard, getLeaderboard } from "../game/api";
 
 export function End() {
     const { state } = useLocation();
+    const { songId, revisionId, image, trackNumber } = useParams();
+    const [leaderboard, setLeaderboard] = useState([]);
+    const [isTop10, setIsTop10] = useState(false);
+    const [name, setName] = useState("");
 
     const navigate = useNavigate();
 
@@ -12,15 +17,81 @@ export function End() {
         // if (state?.score === undefined) {
         //     navigate("/");
         // }
+
+        getLeaderboard(songId, revisionId, image, trackNumber).then((leaderboard) => {
+            if (leaderboard === undefined) {
+                return;
+            }
+
+            if (state?.score !== undefined && state.score !== 0) {
+                if (leaderboard.length < 10) {
+                    setIsTop10(true);
+                } else {
+                    for (let i = 0; i < leaderboard.length; i++) {
+                        if (state?.score >= leaderboard[i].score) {
+                            setIsTop10(true);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            setLeaderboard(leaderboard);
+        });
         drawConfetti();
     }, []);
+
+    function addToLeaderboardOnClick() {
+        if (name === "") {
+            return;
+        }
+
+        addToLeaderboard(songId, revisionId, image, trackNumber, name, state.score).then((leaderboard) => {
+            if (leaderboard === undefined) {
+                return;
+            }
+            
+            setLeaderboard(leaderboard);
+            setIsTop10(false);
+        });
+    }
 
     return (
         <div className="end-container">
             <canvas id="confetti"></canvas>
             <h1 className="end-title">Finished!</h1>
             <p className="score-text">Score: {state?.score}</p>
-            <Button onClick={() => navigate("/")}>Back to Start</Button>
+            {
+                isTop10 ? (
+                    <p className="top-10-text">Congrats! You are in the Top 10. Enter your name to be added to the leaderboards!</p>
+                ) : null
+            }
+            <div className="action-container">
+                {
+                    isTop10 ? (
+                        <>
+                            <Input placeholder="Enter Name" onChange={(event) => setName(event.target.value)} value={name} />
+                            <Button onClick={addToLeaderboardOnClick}>Add To Leaderboard</Button>
+                        </>
+                    ) : null
+                }
+                <Button onClick={() => navigate("/")}>Back to Start</Button>
+            </div>
+            {
+                leaderboard.length === 0 ? null : (
+                    <div className="leaderboard-container">
+                        <h2 className="leaderboard-title">Leaderboard</h2>
+                        {leaderboard.map((entry, index) => {
+                            return (
+                                <div className="leaderboard-entry">
+                                    <p className="leaderboard-entry-name">{entry.name}</p>
+                                    <p className="leaderboard-entry-score">{entry.score}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )
+            }
         </div>
     )
 }

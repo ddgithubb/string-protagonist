@@ -42,7 +42,7 @@ export function Note({ initial, fret, duration, width, pause, pitch }) {
       }}
       exit={{
         opacity: 0,
-        background: fillForProbability(keyProbabilities[pitch % 12]),
+        background: fillForProbability(keyProbabilities?.[pitch % 12] ?? 0),
       }}
       transition={{ opacity: { duration: 0.6 }, background: { duration: 0.6 } }}
     >

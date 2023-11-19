@@ -116,5 +116,6 @@ body{
 }
 
 .base-note-fret-long {
+    justify-content: flex-start;
     margin-left: 14px;
 }

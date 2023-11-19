@@ -36,7 +36,7 @@ export function Game() {
   const navigate = useNavigate();
   const teardownAudio = useRef(null);
   const noteEvent = useRef(null);
-  const keyProbabilityRef = useRef(null);
+  const keyProbabilityRef = useRef(Array(12).fill(0));
   const setKeys = useSetKeyProbabilities();
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export function Game() {
     if (gameLoop.current !== null) {
       gameLoop.current.stop();
     }
-    navigate("/end", {
+    navigate("/end/" + songId + "/" + revisionId + "/" + image + "/" + trackNumber, {
       state: {
         score,
       },

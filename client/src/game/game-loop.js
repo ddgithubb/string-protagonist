@@ -290,6 +290,12 @@ export class GameLoop {
         for (const note of beat.notes) {
           note.initial = initial;
           note.timeToHit = timeToHit;
+          note.holdWidthPercentage = 0;
+
+          if (note.holdTo !== 0) {
+            note.holdWidthPercentage =
+              (100 * (note.holdTo - beat.timestamp)) / TIME_WINDOW;
+          }
 
           newFrame[note.string].push(note);
         }

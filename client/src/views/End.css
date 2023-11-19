@@ -11,6 +11,7 @@
 .end-title {
     font-size: 108px;
     font-weight: bold;
+    margin: 20px;
 }
 
 .score-text {
@@ -25,4 +26,45 @@
     height: 100%;
     position: absolute;
     top: 0;
+}
+
+.action-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.top-10-text {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.leaderboard-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    margin: 20px;
+}
+
+.leaderboard-header {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+.leaderboard-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0px 15px;
+}
+
+.leaderboard-entry-name {
+    font-weight: bold;
 }

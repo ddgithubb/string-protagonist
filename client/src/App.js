@@ -14,7 +14,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<StartPage />} />
                 <Route path="/game/:songId/:revisionId/:image/:trackNumber" element={<Game />} />
-                <Route path="/end" element={<End />} />
+                <Route path="/end/:songId/:revisionId/:image/:trackNumber" element={<End />} />
             </Routes>
         </BrowserRouter>
     );
