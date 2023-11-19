@@ -203,11 +203,6 @@ export class GameLoop {
         changed = true;
       }
 
-      if (currentBeats.length === 0) {
-        clearInterval(this.gameLoop);
-        return;
-      }
-
       if (!changed) {
         return;
       }
@@ -254,11 +249,6 @@ export class GameLoop {
         currentBeats.push(beat);
         nextBeat++;
         changed = true;
-      }
-
-      if (currentBeats.length === 0) {
-        clearInterval(this.gameLoop);
-        return;
       }
 
       if (!changed) {
@@ -334,11 +324,6 @@ export class GameLoop {
         currentFractionWindow += beat.fraction;
         nextBeat++;
         changed = true;
-      }
-
-      if (currentBeats.length === 0) {
-        clearInterval(this.gameLoop);
-        return;
       }
 
       if (!changed) {

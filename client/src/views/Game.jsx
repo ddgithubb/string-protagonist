@@ -6,7 +6,7 @@ import { noteNumberToName } from "../helpers/tunings";
 import Button from "@mui/joy/Button";
 import { Note } from "./Note";
 import ReactPlayer from "react-player";
-import { GameLoop } from "../game/game-loop";
+import { GAME_LOOP_TYPE, GameLoop } from "../game/game-loop";
 import { AnimatePresence } from "framer-motion";
 import { setupAudio } from "../setupAudio.ts";
 import { useSetKeyProbabilities } from "../state.tsx";
@@ -69,6 +69,9 @@ export function Game() {
 
   function endGame() {
     if (teardownAudio.current) teardownAudio.current();
+    if (gameLoop.current !== null) {
+      gameLoop.current.stop();
+    }
     navigate("/end", {
       state: {
         score,
@@ -114,7 +117,8 @@ export function Game() {
       setFrame,
       noteEvent.current,
       setScore,
-      keyProbabilityRef
+      keyProbabilityRef,
+      GAME_LOOP_TYPE.WITH_ADJUSTMENTS
     );
     gameLoop.current.start();
     setGameState(GAME_STATES.STARTED);
