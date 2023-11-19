@@ -92,7 +92,7 @@ impl PitchDetector {
             .collect::<Vec<_>>();
 
         self.score_cb
-            .call1(&JsValue::NULL, &JsValue::from(magnitudes[0]));
+            .call1(&JsValue::NULL, &JsValue::from(1));
     }
 
     pub fn get_score() -> f32 {

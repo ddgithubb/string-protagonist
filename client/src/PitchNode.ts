@@ -20,7 +20,6 @@ export default class PitchNode extends AudioWorkletNode {
       type: "send-wasm-module",
       wasmBytes,
       modelBytes,
-      onScoreTickCallback
     });
   }
 

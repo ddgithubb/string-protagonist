@@ -67,18 +67,13 @@ export function Game() {
         setScore(score);
     }
 
-    function pressStartGame() {
+    async function pressStartGame() {
         if (gameState === GAME_STATES.STARTED || gameState === GAME_STATES.LOADING) return;
 
         if (teardownAudio.current === null) {
-            const audio = setupAudio(updateScore);
+            const audio = await setupAudio(updateScore);
             teardownAudio.current = audio.teardownAudio;
             noteEvent.current = audio.noteEvent;
-
-            audio.noteEvent({
-                notes: [],
-                timestamp: 0
-            });
         }
 
         let counter = 5;
