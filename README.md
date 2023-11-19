@@ -1,4 +1,5 @@
 # string-protagonist
 
-String Protagonist is a web-based React Application that functions as a Guitar-Hero game that you can play with an actual guitar. The pitch recognition is done through a back-end neural network and the front-end is built
-on React and web assembly with Rust.
+String Protagonist is a web-based React Application that functions as a Guitar-Hero game that you can play with an actual guitar. The frontend is built with React and
+ the pitch recognition is done through a neural network that runs 
+in web assembly with Rust. 
