@@ -67,7 +67,7 @@ function SongSearchInput({ inputText, handleInputChange, handleCursorIn }) {
       padding="0px"
       placeholder="Type your song here"
       variant = "outlined"
-      size="lg"
+      size="md"
       value={inputText}
       onChange={handleInputChange}
       style={{
