@@ -21,7 +21,7 @@
 
 .start-page{
     margin-top: 0px;
-    background-image: '${process.env.PUBLIC_URL}/images/guitar_bg.jpg';
+    background-image: '/images/bg.jpg';
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 

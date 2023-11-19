@@ -125,9 +125,15 @@ export function StartPage() {
     setFilteredSongs(filteredSongs);
 
   };
-
+    const bg={
+      backgroundImage:'/images/bg.jpg',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      width: '100%',  // Set the width to fill the container
+      height: '100vh' // Set the height to fill the viewport
+    }
     return (
-        <div className="start-page">
+        <div className="start-page" style={bg}>
             <div className="start-page-title">
                 <p>
                     STRING PROTAGONIST
