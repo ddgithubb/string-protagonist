@@ -10,7 +10,7 @@ class PitchProcessor extends AudioWorkletProcessor {
     this.port.onmessage = (event) => this.onmessage(event.data);
     this.detector = null;
 
-    // setInterval(() => {
+    //setInterval(() => {
     //   console.log('sending message');
     //   this.port.postMessage({
     //     type: "score",
@@ -19,15 +19,16 @@ class PitchProcessor extends AudioWorkletProcessor {
     // }, 100);
   }
 
-  sendScoreMessage() {
+  sendScoreMessage(score) {
     this.port.postMessage({
       type: "score",
-      score: this.detector.get_score(),
+      score,
     });
   }
 
   onmessage(event) {
     if (event.type === "send-wasm-module") {
+      this.modelBytes = event.modelBytes;
       init(WebAssembly.compile(event.wasmBytes)).then(() => {
         this.port.postMessage({ type: "wasm-module-loaded" });
       });
@@ -39,8 +40,7 @@ class PitchProcessor extends AudioWorkletProcessor {
       this.detector = PitchDetector.new(
         sampleRate,
         numAudioSamplesPerAnalysis,
-        this.modelBytes,
-        (score) => this.sendScoreMessage(score)
+        this.modelBytes
       );
 
       this.samples = new Float32Array(numAudioSamplesPerAnalysis).fill(0);
@@ -69,7 +69,10 @@ class PitchProcessor extends AudioWorkletProcessor {
     }
 
     if (this.totalSamples >= this.numAudioSamplesPerAnalysis && this.detector) {
-      this.detector.put_pitch(this.samples);
+      this.port.postMessage({
+        type: "keys",
+        probabilities: this.detector.put_pitch(this.samples),
+      });
     }
     return true;
   }
