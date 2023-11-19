@@ -21,3 +21,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+**/node_modules
+
+data_processor/**/*.csv
+data_processor/**/*.wav
+data_processor/**/*.jams
+data_processor/*.csv
+data_processor/*.zip
+data_processor/annotation
+**/target
+
