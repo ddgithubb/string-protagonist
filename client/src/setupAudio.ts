@@ -36,17 +36,18 @@ async function getWebAudioMediaStream() {
   }
 }
 
-export type PitchDetectedCallback = (pitch: number[]) => void;
+export type OnScoreTickCallback = (score: number) => void;
 
-export async function setupAudio(
-  onPitchDetectedCallback: PitchDetectedCallback
-) {
+export const numAudioSamplesPerAnalysis = 1 << 11;
+export const sampleRate = 44100;
+
+export async function setupAudio(onScoreTick: OnScoreTickCallback) {
   // Get the browser audio. Awaits user "allowing" it for the current tab.
   const mediaStream = await getWebAudioMediaStream();
 
   const context = new window.AudioContext({
     latencyHint: "interactive",
-    sampleRate: 44100,
+    sampleRate,
   });
   const audioSource = context.createMediaStreamSource(mediaStream);
 
@@ -65,11 +66,12 @@ export async function setupAudio(
       );
     }
 
+    const modelBytes = new Uint8Array(
+      await (await fetch("/freq_predictor.onnx")).arrayBuffer()
+    );
     node = new PitchNode(context, "PitchProcessor");
 
-    const numAudioSamplesPerAnalysis = 1 << 14;
-
-    node.init(wasmBytes, onPitchDetectedCallback, numAudioSamplesPerAnalysis);
+    node.init(wasmBytes, modelBytes, onScoreTick, numAudioSamplesPerAnalysis);
 
     audioSource.connect(node);
 

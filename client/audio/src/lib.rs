@@ -1,15 +1,20 @@
 use std::sync::Arc;
 
 use realfft::{RealFftPlanner, RealToComplex};
+use tract_onnx::{prelude::*, tract_hir::internal::InferenceOp};
 use wasm_bindgen::prelude::*;
 use web_sys::{
     window, AudioContext, MediaDevices, MediaStreamAudioSourceNode, MediaStreamConstraints,
     Navigator,
 };
 
-use crate::music::key_from_freq;
+use crate::{
+    music::key_from_freq,
+    nn::{get_keys, get_model},
+};
 
 pub mod music;
+pub mod nn;
 #[wasm_bindgen]
 extern "C" {
     // Use `js_namespace` here to bind `console.log(..)` instead of just
@@ -33,30 +38,38 @@ pub struct PitchDetector {
     sample_rate: usize,
     fft_size: usize,
     fft_plan: Arc<dyn RealToComplex<f32>>,
-    //session: wonnx::Session,
+    model: SimplePlan<
+        TypedFact,
+        Box<dyn TypedOp>,
+        tract_onnx::prelude::Graph<TypedFact, Box<dyn TypedOp>>,
+    >,
 }
 
 #[wasm_bindgen]
 impl PitchDetector {
-    pub fn new(sample_rate: usize, fft_size: usize) -> PitchDetector {
+    pub fn new(sample_rate: usize, fft_size: usize, model_bytes: Vec<u8>) -> PitchDetector {
         #[cfg(feature = "console_error_panic_hook")]
         console_error_panic_hook::set_once();
         log("Hello from wasm");
 
-        let mut planner = RealFftPlanner::<f32>::new();
+        log(format!(
+            "sample_rate: {}, model bytes: {:?}",
+            sample_rate,
+            model_bytes.len()
+        )
+        .as_str());
 
-        //let model_path = Path::new("/freq_predictor.onnx");
-        //let session = wonnx::Session::from_path(model_path).await.unwrap();
+        let mut planner = RealFftPlanner::<f32>::new();
 
         PitchDetector {
             sample_rate,
             fft_size: fft_size,
             fft_plan: planner.plan_fft_forward(fft_size),
-            //       session: session,
+            model: get_model(model_bytes),
         }
     }
 
-    pub fn get_pitch(&self, audio_data: &[f32]) -> Vec<f32> {
+    pub fn put_pitch(&self, audio_data: &[f32]) {
         let mut padded_audio_data = audio_data
             .iter()
             .copied()
@@ -71,50 +84,13 @@ impl PitchDetector {
             .process(&mut padded_audio_data, &mut fft_result)
             .unwrap();
 
-        let mut magnitudes = fft_result
+        let magnitudes = fft_result
             .iter_mut()
             .map(|complex| (complex.re * complex.re + complex.im * complex.im).sqrt())
             .collect::<Vec<_>>();
+    }
 
-        /*let mut input_data = HashMap::new();
-        input_data.insert("arg0".to_string(), magnitudes.collect::<Vec<_>>().into());*/
-
-        //let result = self.session.run(&input_data).await.unwrap();
-
-        /*let mut keys = result
-        .get("sigmoid_1")
-        .unwrap()
-        .as_slice::<f32>()
-        .unwrap()
-        .iter()
-        .map(|x| key_from_freq(*x))
-        .collect::<Vec<_>>();*/
-
-        // subtract harmonic overtones
-
-        for (i, x) in magnitudes.clone().iter().enumerate() {
-            if i == 0 {
-                continue;
-            }
-            for j in (i..magnitudes.len()).step_by(i) {
-                magnitudes[j] -= *x / j as f32;
-            }
-        }
-
-        let mut keys = [0.0f32; 88].to_vec();
-        let mut hi = 10.0f32;
-        for (i, x) in magnitudes.iter().enumerate() {
-            let hz = i as f32 * self.sample_rate as f32 / self.fft_size as f32;
-            keys[key_from_freq(hz) % 12] += x;
-            hi = hi.max(keys[key_from_freq(hz) % 12]);
-        }
-
-        let mut vals = keys.clone();
-        vals.sort_by(|a, b| b.partial_cmp(a).unwrap());
-
-        // divide by highest note,
-        keys.iter_mut().for_each(|x| *x /= vals[1]);
-
-        keys
+    pub fn get_score() -> f32 {
+        return 0.0;
     }
 }

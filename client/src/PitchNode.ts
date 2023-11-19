@@ -1,15 +1,16 @@
-import { PitchDetectedCallback } from "./setupAudio";
+import { OnScoreTickCallback } from "./setupAudio";
 
 export default class PitchNode extends AudioWorkletNode {
-  onPitchDetectedCallback: PitchDetectedCallback | undefined;
+  onScoreTickCallback: OnScoreTickCallback | undefined;
   numAudioSamplesPerAnalysis: number = 0;
 
   init(
     wasmBytes: ArrayBuffer,
-    onPitchDetectedCallback: PitchDetectedCallback,
+    modelBytes: ArrayBuffer,
+    onPitchDetectedCallback: OnScoreTickCallback,
     numAudioSamplesPerAnalysis: number
   ) {
-    this.onPitchDetectedCallback = onPitchDetectedCallback;
+    this.onScoreTickCallback = onPitchDetectedCallback;
     this.numAudioSamplesPerAnalysis = numAudioSamplesPerAnalysis;
 
     // Listen to messages sent from the audio processor.
@@ -18,6 +19,7 @@ export default class PitchNode extends AudioWorkletNode {
     this.port.postMessage({
       type: "send-wasm-module",
       wasmBytes,
+      modelBytes,
     });
   }
 
@@ -29,8 +31,7 @@ export default class PitchNode extends AudioWorkletNode {
         numAudioSamplesPerAnalysis: this.numAudioSamplesPerAnalysis,
       });
     } else if (event.type === "pitch") {
-      if (this.onPitchDetectedCallback)
-        this.onPitchDetectedCallback(event.pitch);
+      if (this.onScoreTickCallback) this.onScoreTickCallback(event.pitch);
     }
   }
 }
