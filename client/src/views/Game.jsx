@@ -55,6 +55,10 @@ export function Game() {
 
     function endGame() {
         if (teardownAudio.current) teardownAudio.current();
+        if (gameLoop.current !== null) {
+            gameLoop.current.stop();
+        }
+        
         navigate("/end", {
             state: {
                 score
